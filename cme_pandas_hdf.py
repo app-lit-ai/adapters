@@ -3,10 +3,10 @@ from pandas._libs.tslibs.timestamps import Timestamp
 import pandas as pd
 import h5py
 
-class DataSource():
+class Adapter():
     def __init__(self, rds, limit=None):
         self.rds = rds
-        vars=rds['datasource']
+        vars=rds['adapter']
         self.path = vars.get('path')
         self.num_chunks = vars.get('num-chunks')
         self.resolution = vars.get('resolution')
