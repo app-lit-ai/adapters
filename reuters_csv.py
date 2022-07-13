@@ -9,6 +9,7 @@ class Adapter():
         self.resolution = vars.get('resolution')
         self.full_df = pd.read_csv(self.path, index_col=0, parse_dates=["Date-Time"])
         self.full_df.columns = [ "transactionTime", "mdEntryPx", "mdEntrySize" ]
+        self.full_df = self.full_df.dropna()
         self.shape = self.full_df.shape
         self.total_sample_count = len(self.full_df)
 
