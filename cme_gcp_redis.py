@@ -5,12 +5,6 @@ import threading
 
 LOCK = threading.Lock()
 
-# Usage:
-#   from lit.data import loader                                                                                                            
-#   adapter = loader.load_adapter("/opt/lit/refined_data/redis.json")                                                                      
-#   stream = adapter.get_stream()                                                                                                          
-#   df = next(stream)
-
 class Adapter():
     def __init__(self, rds, limit=None):
         self.rds = rds
