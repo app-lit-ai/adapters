@@ -2,6 +2,8 @@ from datetime import timedelta
 from pandas._libs.tslibs.timestamps import Timestamp
 import pandas as pd
 import h5py
+import time
+import logging
 
 class Adapter():
     def __init__(self, rds, limit=None):
@@ -17,10 +19,13 @@ class Adapter():
         with h5py.File(self.path, "r") as h5:
             samples_in_file = h5['data']['table'].shape[0]
             # guaranteed to only have one source file per instantiation by design
+            start = time.time()
+            logging.info(f"Loading {self.path} ...")
             if limit:
                 self.df = pd.read_hdf(self.path, start=0, stop=limit)
             else:
                 self.df = pd.read_hdf(self.path)
+            logging.info(f"Loaded in {time.time() - start} seconds.")
             self.df.columns = ['symbol', 'session', 'securityID', 'transactionTime', 'msgSeqNum', 'rptSeqNum','mdEntryPx', 'mdEntrySize', 'sendingTime']
             self.df = self.df.assign(transactionTime=lambda x: pd.to_datetime(x.transactionTime))
             self.df = self.df.assign(sendingTime=lambda x: pd.to_datetime(x.sendingTime))
