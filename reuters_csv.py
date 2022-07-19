@@ -33,27 +33,3 @@ class Adapter():
         for i in range(0, len(lst), chunk_size):
             yield lst[i:i + chunk_size][0], lst[i:i + chunk_size][-1]
         yield None, None
-
-    def split_by_year(input_path, output_folder, start_year=None):
-        chunks = pd.read_csv(input_path, chunksize=1e6, usecols=["Date-Time", "Price", "Volume"], parse_dates=["Date-Time"])
-        current_year = start_year
-        matching_dfs = []
-        for df in chunks:
-            start_timestamp, end_timestamp = df['Date-Time'].iloc[0], df['Date-Time'].iloc[len(df)-1]
-            start_year, end_year = start_timestamp.year, end_timestamp.year
-            print(f"{start_timestamp} -> {end_timestamp}")
-            if end_year < current_year:
-                continue
-            if start_year != current_year:
-                if current_year and len(matching_dfs) > 0:
-                    pd.concat(matching_dfs).to_csv(f"{output_folder}/{current_year}.csv")
-                current_year = start_year
-            match = df[df['Date-Time'].dt.year == current_year]
-            if len(match) > 0:
-                matching_dfs.append(match)
-            if start_year != end_year:
-                pd.concat(matching_dfs).to_csv(f"{output_folder}/{current_year}.csv")
-                current_year = end_year
-                match = df[df['Date-Time'].dt.year == current_year]
-                if len(match) > 0:
-                    matching_dfs.append(match)        
